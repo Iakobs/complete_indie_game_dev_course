@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public GameObject sword;
     public float thrustPower;
     public bool canMove;
+    public bool canAttack;
 
     private Animator _anim;
     private int _currentHealth;
@@ -30,10 +31,24 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
+        if (!canAttack)
+        {
+            return;
+        }
         canMove = false;
+        canAttack = false;
         var newSword = Instantiate(sword, transform.position, sword.transform.rotation);
+
+        if (_currentHealth == maxHealth)
+        {
+            newSword.GetComponent<Sword>().special = true;
+            canMove = true;
+            thrustPower = 500;
+        }
+        
         #region SwordRotation
         var swordDirection = _anim.GetInteger("dir");
+        _anim.SetInteger("attackDir", swordDirection);
         switch (swordDirection)
         {
             case 0:
